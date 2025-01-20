@@ -1,86 +1,66 @@
-#include <iostream>
-#include <queue>
-#include <string>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/wait.h>
 
-using namespace std;
+pid_t pid;
 
-int n, m, k;
-int map[1000][1000];
-bool visited[1000][1000][10] = {0, };
-int iNum[4] = {1, -1, 0, 0};
-int jNum[4] = {0, 0, 1, -1};
-
-enum time_e {DAY = 0, NIGHT = 1};
-
-typedef struct node
+int main(int argc, char **argv)
 {
+    //pid_t pid_temp[3];
+    pid_t *pid_temp;
     int i;
-    int j;
-    int k; //뚫고 갈 수 있는 벽 개수
-    int mvCount;
-    bool time;
-} t_node;
+    int num_of_child;
 
-int bfs()
-{
-    queue<t_node> q;
+    printf("[pid: %d] running %s", pid = getpid(), argv[0]);
+    for(i = 1; i < argc; i++)
+        printf(" %s", argv[i]);
+    printf("\n");
 
-    t_node firstNode = {0, 0, k, 1, DAY};
-    q.push(firstNode);
-    visited[0][0][0] = true;
+    num_of_child = argc - 2;
 
-    while (!q.empty())
+    /* Implement code */
+    pid_temp = (pid_t *)malloc(sizeof(pid_t) * num_of_child);
+    if (pid_temp == NULL)
+        return (2);
+
+    pid_t parent_pid = getpid();
+
+    for (int i = 0; i < num_of_child; i++)
     {
-        t_node poppedNode = q.front();
-        q.pop();
-
-        if (poppedNode.i == n - 1 && poppedNode.j == m - 1)
-            return (poppedNode.mvCount);
-
-        for (int index = 0; index < 4; index++)
+        if (getpid() == parent_pid)
         {
-            int newI = poppedNode.i + iNum[index];
-            int newJ = poppedNode.j + jNum[index];
-
-            if (newI < 0 || newI >= n || newJ < 0 || newJ >= m || visited[newI][newJ][k - poppedNode.k])
-                continue;
-
-            if (map[newI][newJ] == 1 && poppedNode.k > 0)
+            pid_temp[i] = fork();
+            if (pid_temp[i] == 0) //child
             {
-                if (poppedNode.time == DAY)
-                {
-                    t_node crushedWallNode = {newI, newJ, poppedNode.k - 1, poppedNode.mvCount + 1, !poppedNode.time};
-                    q.push(crushedWallNode);
-                    visited[newI][newJ][k - crushedWallNode.k] = true;
-                }
-                else if (poppedNode.time == NIGHT)
-                {
-                    t_node crushedWallNode = {poppedNode.i, poppedNode.j, poppedNode.k, poppedNode.mvCount + 1, !poppedNode.time};
-                    q.push(crushedWallNode); 
-                }
-            }
-            else if (map[newI][newJ] == 0)
-            {
-                t_node justPassingNode = {newI, newJ, poppedNode.k, poppedNode.mvCount + 1, !poppedNode.time};
-                q.push(justPassingNode);
-                visited[newI][newJ][k - justPassingNode.k] = true;
+                printf("[pid: %d] about to run [grep -rn %s %s]\n", (int)getpid(), argv[i + 2], argv[1]);
+                execl("/usr/bin/grep", "grep", "-rn", argv[2], argv[1], NULL);
             }
         }
     }
-    return (-1);
-}
 
-int main(void)
-{
-    cin >> n >> m >> k;
+    // for (int i = 0; i < num_of_child; i++)
+    // {
+    //     if (pid_temp[i] == 0) //child
+    //     {
+    //         printf("[pid: %d] about to run [grep -rn %s %s]\n", (int)getpid(), argv[i + 2], argv[1]);
+    //         execl("/usr/bin/grep", "grep", "-rn", argv[2], argv[1], NULL);
+    //     }
+    // }
 
-    for (int i = 0; i < n; i++)
+    if (getpid() == parent_pid)
     {
-        string tmp;
-        cin >> tmp;
-        for (int j = 0; j < m; j++)
-            map[i][j] = tmp[j] - '0';
+        printf("[pid: %d] waiting child's termination\n", (int)getpid());
+        for (int i = 0; i < num_of_child; i++)
+        {
+            waitpid(pid_temp[i], NULL, 0);
+            printf("pid %d bas been terminated with status 0\n", (int)pid_temp[i]);
+        }
     }
-
-    cout << bfs() << endl;
+    
+    printf("[pid: %d] terminted\n", (int)pid);
+    free(pid_temp);
+    return EXIT_SUCCESS;
 }
