@@ -17,24 +17,6 @@ int jNum[4] = {0, 0, 1, -1};
 
 void mvWater(void)
 {
-    // for (int i = 0; i < r; i++)
-    // {
-    //     for (int j = 0; j < c; j++)
-    //     {
-    //         if (map[i][j] == '*')
-    //         {
-    //             for (int index = 0; index < 4; index++)
-    //             {
-    //                 int newI = i + iNum[index];
-    //                 int newJ = j + jNum[index];
-
-    //                 if (map[newI][newJ] == '.')
-    //                     map[newI][newJ] = '*';
-    //             }
-    //         }
-    //     }
-    // }
-
     queue<tuple<int, int>> water;
 
     for (int i = 0; i < r; i++)
@@ -64,22 +46,6 @@ void mvWater(void)
         }
     }
 }
-
-// void printMap(int playerI, int playerJ)
-// {
-//     cout << "\n";
-//     for (int i = 0; i < r; i++)
-//     {
-//         for (int j = 0; j < c; j++)
-//         {
-//             if (i == playerI && j == playerJ)
-//                 cout << 'S';
-//             else
-//                 cout << map[i][j];
-//         }
-//         cout << "\n";
-//     }
-// }
 
 void bfs(int startI, int startJ)
 {
@@ -117,7 +83,6 @@ void bfs(int startI, int startJ)
 
             if (map[newI][newJ] == '.' || map[newI][newJ] == 'D')
             {
-                // printMap(newI, newJ);
                 visited[newI][newJ] = true;
                 q.push(make_tuple(newI, newJ, poppedTime + 1));
             }
