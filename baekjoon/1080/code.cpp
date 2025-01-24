@@ -27,5 +27,12 @@ int main(void)
 {
     getInput();
 
-    
+    for (int i = 0; i < n - 2; i++)
+    {
+        for (int j = 0; j < m - 2; j++)
+        {
+            if (mapOne[i][j] != mapTwo[i][j])
+                flipNumbers(i, j);
+        }
+    }
 }
