@@ -10,15 +10,24 @@ typedef struct s_node
     int lose;
 } t_node;
 
-bool back(int win, int draw, int lose)
+int isPossible = false;
+
+bool back(vector<t_node> answer, vector<t_node> guess)
 {
     
-
     for (int i = 0; i < 5; i++)
     {
-        back(win + 1, draw, lose);
-        back(win, draw + 1, lose);
-        back(win, draw, lose + 1);
+        guess[i].win++;
+        back(answer, guess);
+        guess[i].win--;
+
+        guess[i].draw++;
+        back(answer, guess);
+        guess[i].draw--;
+
+        guess[i].lose++;
+        back(answer, guess);
+        guess[i].lose--;
     }
 }
 
@@ -28,18 +37,23 @@ int main(void)
 
     for (int i = 0; i < 4; i++)
     {
-        vector<t_node> results(6);
-        vector<string> resultString;
+        vector<t_node> answer(6);
+        vector<t_node> guess(6);
+        isPossible = false;
         for (int j = 0; j < 6; j++)
         {
             int a, b, c;
             cin >> a >> b >> c;
-            results[j].win = a;
-            results[j].draw = b;
-            results[j].lose = c;
-            resultString[j] = "";
+            answer[j].win = a;
+            answer[j].draw = b;
+            answer[j].lose = c;
+
+            answer[j].win = 0;
+            answer[j].draw = 0;
+            answer[j].lose = 0;
         }
-        isOK.push_back(back(0, 0, 0));
+        back(answer, guess);
+        isOK.push_back(isPossible);
     }
 
     for (int i = 0; i < 4; i++)
