@@ -44,13 +44,11 @@ bool guessBiggerthanAnswer(vector<t_node> answer, vector<t_node> guess)
 
 void back(vector<t_node> answer, vector<t_node> guess, int depth, int opponent)
 {
-    // printf("depth is:%d\n", depth);
     if (isPossible == true)
         return;
 
     if (depth == F)
     {
-        // printf("depth is F\n");
         if (checkAllSame(answer, guess) == true)
             isPossible = true;
         return ;
@@ -60,7 +58,6 @@ void back(vector<t_node> answer, vector<t_node> guess, int depth, int opponent)
         if (guessBiggerthanAnswer(answer, guess) == false)
             return ;
     }
-    
     
     //depth win
     guess[depth].win++;
@@ -115,7 +112,6 @@ int main(void)
             guess[j].lose = 0;
         }
         back(answer, guess, A, B);
-        // printf("ispossible:%d\n", isPossible);
         isOK.push_back(isPossible);
     }
 
