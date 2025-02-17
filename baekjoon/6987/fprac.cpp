@@ -42,7 +42,7 @@ bool guessBiggerthanAnswer(vector<t_node> answer, vector<t_node> guess)
     return (true);
 }
 
-void back(vector<t_node> answer, vector<t_node> guess, int depth)
+void back(vector<t_node> answer, vector<t_node> guess, int depth, int opponent)
 {
     // printf("depth is:%d\n", depth);
     if (isPossible == true)
@@ -61,29 +61,36 @@ void back(vector<t_node> answer, vector<t_node> guess, int depth)
             return ;
     }
     
-    for (int i = depth + 1; i <= F; i++)
-    {
-        //depth win
-        guess[depth].win++;
-        guess[i].lose++;
-        back(answer, guess, depth + 1);
-        guess[depth].win--;
-        guess[i].lose--;
+    
+    //depth win
+    guess[depth].win++;
+    guess[opponent].lose++;
+    if (opponent == F)
+        back(answer, guess, depth + 1, depth + 2);
+    else
+        back(answer, guess, depth, opponent + 1);
+    guess[depth].win--;
+    guess[opponent].lose--;
 
-        //depth draw
-        guess[depth].draw++;
-        guess[i].draw++;
-        back(answer, guess, depth + 1);
-        guess[depth].draw--;
-        guess[i].draw--;
+    //depth draw
+    guess[depth].draw++;
+    guess[opponent].draw++;
+    if (opponent == F)
+        back(answer, guess, depth + 1, depth + 2);
+    else
+        back(answer, guess, depth, opponent + 1);
+    guess[depth].draw--;
+    guess[opponent].draw--;
 
-        //depth lose
-        guess[depth].lose++;
-        guess[i].win++;
-        back(answer, guess, depth + 1);
-        guess[depth].lose--;
-        guess[i].win--;
-    }
+    //depth lose
+    guess[depth].lose++;
+    guess[opponent].win++;
+    if (opponent == F)
+        back(answer, guess, depth + 1, depth + 2);
+    else
+        back(answer, guess, depth, opponent + 1);
+    guess[depth].lose--;
+    guess[opponent].win--;
 }
 
 int main(void)
@@ -107,8 +114,8 @@ int main(void)
             guess[j].draw = 0;
             guess[j].lose = 0;
         }
-        back(answer, guess, A);
-        printf("ispossible:%d\n", isPossible);
+        back(answer, guess, A, B);
+        // printf("ispossible:%d\n", isPossible);
         isOK.push_back(isPossible);
     }
 
