@@ -3,6 +3,8 @@
         "ostream": "cpp",
         "utility": "cpp",
         "iostream": "cpp",
-        "tuple": "cpp"
+        "tuple": "cpp",
+        "vector": "cpp",
+        "string.h": "c"
     }
 }
