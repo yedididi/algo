@@ -17,7 +17,6 @@ typedef struct s_node
 int n;
 vector<int> answer;
 vector<t_node> question;
-bool print = false;
 
 bool allNumDiff(int input)
 {
@@ -30,6 +29,8 @@ bool allNumDiff(int input)
     if (firstNum == thirdNum)
         return (false);
     if (thirdNum == secondNum)
+        return (false);
+    if (firstNum == 0 || secondNum == 0 || thirdNum == 0)
         return (false);
     return (true);
 }
@@ -55,20 +56,7 @@ bool questionOK(int num)
             numbers.insert(numArr[i]);
 
         ball = 6 - numbers.size() - strike;
-
-        // if (print == true)
-        // {
-        //     cout << "strike:" << strike << ", q.strike:" << question[i].strike << endl;
-        //     cout << "ball:" << ball << ", q.ball:" <<  question[i].ball << endl;
-        //     print = false;
-        // }
-
-        if (strike == question[i].strike && ball == question[i].ball)
-        {
-            // cout << "strike:" << strike << ", q.strike:" << question[i].strike << endl;
-            // cout << "ball:" << ball << ", q.ball:" <<  question[i].ball << endl;
-        }
-        else
+        if (!(strike == question[i].strike && ball == question[i].ball))
             return (false);
     }
     return (true);
@@ -95,17 +83,10 @@ int main(void)
 
     for (int i = 123; i <= 987; i++)
     {
-        // if (i == 324)
-        //     print = true;
-
         if (allNumDiff(i))
         {
             if (questionOK(i))
-            {
-                // cout << "qOK true\n";
-                // printf("%d ok\n", i);
                 answer.push_back(i);
-            }
         }
     }
     cout << answer.size() << endl;
