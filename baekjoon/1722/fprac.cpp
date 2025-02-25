@@ -1,65 +1,93 @@
 #include <iostream>
+#include <set>
 
 using namespace std;
 
 int n;
 int arr[21];
-int k;
-int printTimes = 0;
-bool endVal = false;
+long long k;
+set<long long> numbers;
+long long factorial[21];
 
-void printPermutation(int permutation[21], bool visited[21], int depth)
-{
-    if (endVal)
-        return ;
-
-    if (depth == n)
-    {
-        printTimes++;
-        if (printTimes == k)
-        {    
-            for (int i = 0; i < n; i++)
-                cout << permutation[i] << " ";
-            cout << "\n";
-            // exit(0); //maybe not possible?
-            endVal = true;
-            return ;
-        }
-    }
-
-    for (int i = 1; i <= n; i++)
-    {
-        if (visited[i])
-            continue;
-        
-        visited[i] = true;
-        permutation[depth] = i;
-        printPermutation(permutation, visited, depth + 1);
-        visited[i] = false;
-    }
+void precomputeFactorials() {
+    factorial[0] = 1;
+    for (int i = 1; i <= 20; i++)
+        factorial[i] = factorial[i - 1] * i;
 }
 
-void printWhichPermutation(int permutation[21], bool visited[21], int depth)
+long long getFactorial(int num) {
+    return factorial[num];
+}
+
+void printPermutation(long long input)
 {
-    
+    for (int i = 0; i < n; i++)
+    {
+        int pNum = 0;
+        long long factNum = getFactorial(n - i - 1);
+
+        pNum = input / factNum;
+        input = input % factNum;
+        // cout << "calculated pNum is:" << pNum << endl;
+
+        int rightNum = 0;
+        for (set<long long>::iterator itr = numbers.begin(); itr != numbers.end(); itr++)
+        {
+            if (pNum == rightNum)
+            {
+                cout << *itr << " ";
+                numbers.erase(*itr);
+                break;
+            }
+            rightNum++;
+        }
+    }
+    cout << endl;
+}
+
+void printWhichPermutation()
+{
+    long long sum = 0;
+
+    for (int i = 0; i < n; i++)
+    {
+        long long p = 1;
+        for (set<long long>::iterator itr = numbers.begin(); itr != numbers.end(); itr++)
+        {
+            if (*itr == arr[i])
+                break;
+            p++;
+        }
+        sum += ((p - 1) * getFactorial(n - i - 1));
+        numbers.erase(arr[i]);
+    }
+    cout << sum + 1 << endl;
 }
 
 int main(void)
 {
     int problemType;
     bool visited[21] = {false, };
-    int permutation[21] = {0, };
+    long long permutation[21] = {0, };
     cin >> n >> problemType;
 
+    precomputeFactorials();
     if (problemType == 1)
     {
         cin >> k;
-        printPermutation(permutation, visited, 0);
+        for (int i = 0; i < n; i++)
+        {
+            numbers.insert(i + 1);
+        }
+        printPermutation(k - 1);
     }
     else if (problemType == 2)
     {
         for (int i = 0; i < n; i++)
+        {
             cin >> arr[i];
-        printWhichPermutation(permutation, visited, 0);
+            numbers.insert(arr[i]);
+        }
+        printWhichPermutation();
     }
 }
