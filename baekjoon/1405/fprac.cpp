@@ -21,7 +21,7 @@ void input(void)
     }
 }
 
-void dfs(int oldI, int oldJ, int depth, long double percentage, bool visited[40][40])
+void dfs(int oldI, int oldJ, int depth, long double percentage, bool visited[50][50])
 {
     // cout << "per is:" << percentage << endl;
     if (depth == n)
@@ -40,16 +40,18 @@ void dfs(int oldI, int oldJ, int depth, long double percentage, bool visited[40]
             continue ;
 
         visited[newI][newJ] = true;
-        dfs(newI, newJ, depth + 1, percentage * possibility[index], visited);
+        dfs(newI, newJ, depth + 1, (percentage * possibility[index]), visited);
         visited[newI][newJ] = false;
     }
 }
 
 int main(void)
 {
-    bool visited[40][40] = {0, };
+    bool visited[50][50] = {0, };
 
     input();
+    visited[20][20] = true;
     dfs(20, 20, 0, 1., visited);
+    cout.precision(10);
     cout << total << endl;
 }
