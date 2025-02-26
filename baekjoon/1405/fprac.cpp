@@ -23,10 +23,8 @@ void input(void)
 
 void dfs(int oldI, int oldJ, int depth, long double percentage, bool visited[50][50])
 {
-    // cout << "per is:" << percentage << endl;
     if (depth == n)
     {
-        // cout << percentage << endl;
         total += percentage;
         return ;
     }
