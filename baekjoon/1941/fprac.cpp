@@ -51,6 +51,8 @@ bool isSomBigger()
 bool isConnected()
 {
     bool connectMap[5][5] = {0,};
+    bool visited[5][5] = {0,};
+    int connectedNum = 0;
 
     for (int i = 0; i < 7; i++)
     {
@@ -61,13 +63,14 @@ bool isConnected()
     t_node firstNode = {princess[0] / 5, princess[0] % 5, 0};
     q.push(firstNode);
 
-    while (1)
+    while (!q.empty())
     {
         t_node poppedNode = q.front();
         q.pop();
 
-        if (poppedNode.depth == 7)
+        if (connectedNum == 7)
             return (true);
+
         for (int index = 0; index < 4; index++)
         {
             int newI = poppedNode.i + iNum[index];
@@ -75,8 +78,14 @@ bool isConnected()
 
             if (newI < 0 || newI >= 5 || newJ < 0 || newJ >= 5)
                 continue;
+
+            if (visited[newI][newJ])
+                continue;
+
             if (connectMap[newI][newJ])
             {
+                connectedNum++;
+                visited[newI][newJ] = true;
                 t_node newNode = {newI, newJ, poppedNode.depth + 1};
                 q.push(newNode);
             }
