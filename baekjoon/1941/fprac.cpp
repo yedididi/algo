@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <queue>
 
 using namespace std;
 
@@ -8,6 +9,13 @@ int totalNum = 0;
 int princess[7] = {0, };
 int iNum[4] = {0, 0, 1, -1};
 int jNum[4] = {1, -1, 0, 0};
+
+typedef struct s_node 
+{
+    int i;
+    int j;
+    int depth;
+} t_node;
 
 void input()
 {
@@ -42,28 +50,39 @@ bool isSomBigger()
 
 bool isConnected()
 {
+    bool connectMap[5][5] = {0,};
+
     for (int i = 0; i < 7; i++)
     {
-        bool flag = false;
-        int oldI = princess[i] / 5;
-        int oldJ = princess[i] % 5;
+        connectMap[princess[i] / 5][princess[i] % 5] = true; 
+    }
+
+    queue<t_node> q;
+    t_node firstNode = {princess[0] / 5, princess[0] % 5, 0};
+    q.push(firstNode);
+
+    while (1)
+    {
+        t_node poppedNode = q.front();
+        q.pop();
+
+        if (poppedNode.depth == 7)
+            return (true);
         for (int index = 0; index < 4; index++)
         {
-            int newI = oldI + iNum[index];
-            int newJ = oldJ + jNum[index];
+            int newI = poppedNode.i + iNum[index];
+            int newJ = poppedNode.j + jNum[index];
+
             if (newI < 0 || newI >= 5 || newJ < 0 || newJ >= 5)
                 continue;
-            int newClassNum = (newI * 5) + newJ;
-            for (int j = 0; j < 7; j++)
+            if (connectMap[newI][newJ])
             {
-                if (newClassNum == princess[j])
-                    flag = true;
+                t_node newNode = {newI, newJ, poppedNode.depth + 1};
+                q.push(newNode);
             }
         }
-        if (flag == false)
-            return (false);
     }
-    return (true);
+    return (false);
 }
 
 
