@@ -21,7 +21,7 @@ int main(void)
             cout << "Invalid\n";
         else if (numbers[2] == numbers[0])
             cout << "Equilateral\n";
-        else if (numbers[2] == numbers[1])
+        else if (numbers[2] == numbers[1] || numbers[0] == numbers[1])
             cout << "Isosceles\n";
         else
             cout << "Scalene\n";
