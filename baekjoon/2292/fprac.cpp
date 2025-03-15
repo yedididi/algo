@@ -7,4 +7,5 @@ int n;
 int main(void)
 {
     cin >> n;
+    cout << n;
 }
