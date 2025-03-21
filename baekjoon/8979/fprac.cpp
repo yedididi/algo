@@ -16,9 +16,12 @@ typedef struct s_medals
 } t_medals;
 
 vector<t_medals> list;
-multimap<int, int> medalNum;
+int sum[1000001] = {0,};
+int maxSum = 0;
+t_medals kMedals;
+int countriesBeforeK = 0;
 
-int main(void)
+void input(void)
 {
     cin >> n >> k;
 
@@ -30,6 +33,49 @@ int main(void)
 
         t_medals tmp = {num, gold, silver, bronze, gold + silver + bronze};
         list.push_back(tmp);
-        medalNum.insert(gold + silver + bronze, num);
+
+        sum[gold + silver + bronze]++;
+
+        if (num == k)
+            kMedals = tmp;
+        if (maxSum < gold + silver + bronze)
+            maxSum = gold + silver + bronze;
+    }
+
+    for (int i = maxSum; i > kMedals.sum; i--)
+    {
+        countriesBeforeK += sum[i];
     }
 }
+
+int main(void)
+{
+    input();
+
+    for (int i = 0; i < n; i++)
+    {
+        if (list[i].sum == kMedals.sum && list[i].gold > kMedals.gold)
+            countriesBeforeK++;
+    // }
+    // for (int i = 0; i < n; i++)
+    // {
+        if (list[i].sum == kMedals.sum && list[i].gold == kMedals.gold
+            && list[i].silver > kMedals.silver)
+            countriesBeforeK++;
+    // }
+    // for (int i = 0; i < n; i++)
+    // {
+        if (list[i].sum == kMedals.sum && list[i].gold == kMedals.gold && list[i].silver == kMedals.silver
+            && list[i].bronze > kMedals.bronze)
+            countriesBeforeK++;
+    }
+    cout << countriesBeforeK + 1 << endl;
+}
+
+// 6 5
+// 1 3 0 0
+// 2 0 2 0
+// 3 0 0 2
+// 4 0 2 0
+// 5 6 3 2
+// 6 0 0 0
