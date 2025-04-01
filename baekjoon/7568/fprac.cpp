@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+
 using namespace std;
 
 typedef struct s_body
@@ -11,11 +12,9 @@ typedef struct s_body
     int num;
 } t_body;
 
-int n;
-
 bool compare(const t_body &a, const t_body &b)
 {
-    if (a.height != b.height)
+    if (a.height > b.height)
         return (a.weight > b.weight);
     return (a.weight > b.weight);
 }
@@ -27,6 +26,7 @@ bool finalCompare(const t_body &a, const t_body &b)
 
 int main(void)
 {
+    int n;
     int num = 0;
     cin >> n;
 
@@ -49,11 +49,9 @@ int main(void)
             ;
         
         body[i].rank = rank;
-        // cout << rank << " ";
     }
 
     sort(body.begin(), body.end(), finalCompare);
-
 
     for (int i = 0; i < n; i++)
     {
