@@ -1,81 +1,56 @@
 #include <iostream>
 #include <vector>
-#include <map>
+#include <algorithm>
 
 using namespace std;
 
-int n, k;
-
-typedef struct s_medals
+typedef struct s_medal
 {
     int num;
     int gold;
     int silver;
     int bronze;
-    int sum;
-} t_medals;
+} t_medal;
 
-vector<t_medals> list;
-int sum[1000001] = {0,};
-int maxSum = 0;
-t_medals kMedals;
-int countriesBeforeK = 0;
+int n, k;
 
-void input(void)
+bool compare(const t_medal &a, const t_medal &b)
 {
-    cin >> n >> k;
-
-    for (int i = 0; i < n; i++)
-    {
-        int num, gold, silver, bronze;
-
-        cin >> num >> gold >> silver >> bronze;
-
-        t_medals tmp = {num, gold, silver, bronze, gold + silver + bronze};
-        list.push_back(tmp);
-
-        sum[gold + silver + bronze]++;
-
-        if (num == k)
-            kMedals = tmp;
-        if (maxSum < gold + silver + bronze)
-            maxSum = gold + silver + bronze;
-    }
-
-    for (int i = maxSum; i > kMedals.sum; i--)
-    {
-        countriesBeforeK += sum[i];
-    }
+    if (a.gold != b.gold)
+        return (a.gold > b.gold);
+    
+    if (b.silver != b.silver)
+        return (a.silver > b.silver);
+    
+    return (a.bronze > b.bronze);
 }
 
 int main(void)
 {
-    input();
+    cin >> n >> k;
+
+    vector<t_medal> score(n);
 
     for (int i = 0; i < n; i++)
     {
-        if (list[i].sum == kMedals.sum && list[i].gold > kMedals.gold)
-            countriesBeforeK++;
-    // }
-    // for (int i = 0; i < n; i++)
-    // {
-        if (list[i].sum == kMedals.sum && list[i].gold == kMedals.gold
-            && list[i].silver > kMedals.silver)
-            countriesBeforeK++;
-    // }
-    // for (int i = 0; i < n; i++)
-    // {
-        if (list[i].sum == kMedals.sum && list[i].gold == kMedals.gold && list[i].silver == kMedals.silver
-            && list[i].bronze > kMedals.bronze)
-            countriesBeforeK++;
+        cin >> score[i].num >> score[i].gold >> score[i].silver >> score[i].bronze;
     }
-    cout << countriesBeforeK + 1 << endl;
-}
 
-// 6 5
-// 1 3 0 0
-// 2 0 2 0
-// 3 0 0 2
-// 4 0 2 0
-// 5 6 3 2
-// 6 0 0 0
+    sort(score.begin(), score.end(), compare);
+
+    int rank = 1;
+    for (int i = 0; i < n; i++)
+    {
+        if (i > 0 && (score[i].gold == score[i - 1].gold) && (score[i].silver == score[i - 1].silver) && (score[i].bronze == score[i - 1].bronze))
+            ;
+        else
+            rank = i + 1;
+
+        cout << rank << endl;
+        // if (score[i].num == k)
+        // {
+        //     cout << rank << endl;
+        //     break;
+        // }
+    }
+}

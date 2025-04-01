@@ -6,6 +6,7 @@
         "tuple": "cpp",
         "vector": "cpp",
         "string.h": "c",
-        "set": "cpp"
+        "set": "cpp",
+        "ratio": "cpp"
     }
 }
