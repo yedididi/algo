@@ -8,20 +8,13 @@ typedef struct s_body
 {
     int height;
     int weight;
-    int rank;
-    int num;
 } t_body;
 
 bool compare(const t_body &a, const t_body &b)
 {
-    if (a.height > b.height)
-        return (a.weight > b.weight);
-    return (a.weight > b.weight);
-}
-
-bool finalCompare(const t_body &a, const t_body &b)
-{
-    return (a.num < b.num);
+    if (a.weight < b.weight && a.height < b.height)
+        return (true);
+    return (false);
 }
 
 int main(void)
@@ -35,27 +28,17 @@ int main(void)
     for (int i = 0; i < n; i++)
     {
         cin >> body[i].weight >> body[i].height;
-        body[i].num = num++;
     }
-
-    sort(body.begin(), body.end(), compare);
-
-    int rank = 1;
-    for (int i = 0; i < n; i++)
-    {
-        if (i > 0 && body[i].height < body[i - 1].height && body[i].weight < body[i - 1].weight)
-            rank = i + 1;
-        else
-            ;
-        
-        body[i].rank = rank;
-    }
-
-    sort(body.begin(), body.end(), finalCompare);
 
     for (int i = 0; i < n; i++)
     {
-        cout << body[i].rank << " ";
+        int rank = 1;
+        for (int j = 0; j < n; j++)
+        {
+            if (compare(body[i], body[j]))
+                rank++;
+        }
+        cout << rank << " ";
     }
     cout << endl;
 }
