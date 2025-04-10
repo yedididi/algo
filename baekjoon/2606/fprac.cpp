@@ -4,8 +4,8 @@
 using namespace std;
 
 int computerNum, lineNum;
-vector<vector<int>> map(100, vector<int>(0));
-vector<bool> visited(100, 0);
+vector<vector<int>> map(101, vector<int>(0));
+vector<bool> visited(101, 0);
 int totalNum = 0;
 
 void dfs(int comNum)
