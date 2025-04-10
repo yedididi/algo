@@ -3,13 +3,13 @@
 
 using namespace std;
 
-int n, k;
-vector<int> numbers;
-int visited[100002];
-
 int main(void)
 {
+    int n, k;
+    vector<int> numbers;
+    int visited[100002] = {0};
     int answer = -1;
+
     cin >> n >> k;
     for (int i = 0; i < n; i++)
     {
@@ -18,19 +18,19 @@ int main(void)
         numbers.push_back(tmp);
     }
 
-    int ri = 0;
-    int le = 0;
-    for (int le = 0; le < n; le++)
+    int right = 0;
+    int left = 0;
+    for (int left = 0; left < n; left++)
     {
-        while (ri < n && visited[numbers[ri]] < k)
+        while (right < n && visited[numbers[right]] < k)
         {
-            visited[numbers[ri]]++;
-            ri++;
+            visited[numbers[right]]++;
+            right++;
         }
-        answer = max(answer, ri - le);
-        if (ri == n)
+        answer = max(answer, right - left);
+        if (right == n)
             break;
-        visited[numbers[le]]--;
+        visited[numbers[left]]--;
     }
 
     cout << answer << endl;
