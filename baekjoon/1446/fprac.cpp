@@ -17,24 +17,23 @@ vector<t_node> shortcut;
 
 void dfs(int location, int shortcutIndex, int distance)
 {
-    int i = location;
+    // cout << "location is:" << location << endl;
+    if (distance >= minValue || location > d)
+        return ;
 
     if (location >= d)
     {
+        // cout << "distance is:" << distance << endl;
         if (location == d)
             minValue = min(minValue, distance);
         return ;
     }
 
-    while ((shortcutIndex < n && i != shortcut[shortcutIndex].end) || location == (d - 1))
+    for (int index = shortcutIndex; index != n; index++)
     {
-        i++;
-        distance++;
+        dfs(shortcut[index].end, index + 1, distance + shortcut[index].lenth);
+        dfs(location + 1, index, distance + 1);
     }
-
-    dfs(i + 1, shortcutIndex, distance); // not taking shortcut
-
-    dfs(shortcut[shortcutIndex].end, shortcutIndex + 1, distance + shortcut[shortcutIndex].lenth);
 }
 
 bool compare(t_node &a, t_node &b)
