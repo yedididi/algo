@@ -1,7 +1,8 @@
 #include <iostream>
 #include <vector>
+#include <string>
 #include <algorithm>
-#include <string.h>
+#include <unordered_map>
 
 using namespace std;
 
@@ -12,48 +13,48 @@ typedef struct s_node
     int wordAppearNum;
 } t_node;
 
-int n, m;
-vector<t_node> dictionary;
-
 bool compare(const t_node &a, const t_node &b)
 {
     if (a.wordAppearNum != b.wordAppearNum)
         return (a.wordAppearNum > b.wordAppearNum);
-    
+
     if (a.wordLen != b.wordLen)
         return (a.wordLen > b.wordLen);
-    
-    int compareNum = a.word.compare(b.word);
-    return (compareNum != 0);
+
+    return (a.word.compare(b.word) < 0); // 사전순 오름차순
 }
 
 int main(void)
 {
     cin.tie(NULL);
-    // sync_with_stdio(false);
+    ios_base::sync_with_stdio(false); // sync_with_stdio(false) 대신 권장되는 방식
 
+    int n, m;
     cin >> n >> m;
 
+    unordered_map<string, int> wordCount;
     for (int i = 0; i < n; i++)
     {
         string tmp;
         cin >> tmp;
-
         if (tmp.size() >= m)
-        {    
-            auto itr = find(dictionary.begin(), dictionary.end(), tmp);
-            if (itr == dictionary.end())
-            {
-                t_node newNode = {tmp, tmp.size(), 1};
-                dictionary.push_back(newNode);
-            }
-            else
-                itr->wordAppearNum++;
+        {
+            wordCount[tmp]++;
         }
+    }
+
+    vector<t_node> dictionary;
+    for (auto const& [word, count] : wordCount)
+    {
+        dictionary.push_back({word, word.size(), count});
     }
 
     sort(dictionary.begin(), dictionary.end(), compare);
 
-    for (auto itr = dictionary.begin(); itr != dictionary.end(); itr++)
-        cout << itr->word << "\n";
+    for (const auto& node : dictionary)
+    {
+        cout << node.word << "\n";
+    }
+
+    return 0;
 }
