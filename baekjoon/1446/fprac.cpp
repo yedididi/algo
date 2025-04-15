@@ -1,3 +1,5 @@
+//this uses dfs, which is not efficient!!s
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -21,11 +23,10 @@ void dfs(int location, int shortcutIndex, int distance)
     if (distance >= minValue || location > d)
         return ;
 
-    if (location >= d)
+    if (location == d)
     {
         // cout << "distance is:" << distance << endl;
-        if (location == d)
-            minValue = min(minValue, distance);
+        minValue = min(minValue, distance);
         return ;
     }
 
