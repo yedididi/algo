@@ -66,15 +66,3 @@ def read_language(L1, L2, reverse=False, verbose=False):
     if verbose:
         print(pairs)
     return Encode_lang, Decode_lang, pairs
-
-
-SOS_token = 0
-EOS_token = 1
-# MAX_LENGTH = 3000
-device = "cuda" if torch.cuda.is_available() else "cpu"
-lang_input, lang_output, pairs = read_language('ENG', 'KOR', reverse=False, verbose=False)
-for idx in range(10):
-    print(random.choice(pairs))
-tokenizer = AutoTokenizer.from_pretrained("Helsinki-NLP/opus-mt-ko-en")
-encoded_input = tokenizer(lang_input, padding=True, truncation=True, return_tensors="pt")
-decoded_input = tokenizer(lang_output, padding=True, truncation=True, return_tensors="pt")
