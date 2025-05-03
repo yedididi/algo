@@ -29,10 +29,15 @@ int main(void)
             bLen++;
     }
 
-    for (int i = 0; i < input.length() - bLen; i++)
+    string newStr = input + input;
+
+    for (int i = 0; i <= input.length(); i++)
     {
-        minNum = min(minNum, getANum(i, input, bLen));
+        // cout << "i is:" << i << endl;
+        minNum = min(minNum, getANum(i, newStr, bLen));
     }
 
     cout << minNum << endl;
 }
+
+// abababababababa
