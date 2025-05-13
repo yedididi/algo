@@ -54,3 +54,15 @@ int main(void)
         // }
     }
 }
+
+
+typedef struct s_profile
+{
+    std::string name = "이예지";
+	int         birthday = 19991216;
+    std::string github = "https://github.com/yedididi";
+    std::string velog = "https://velog.io/@yedididi/posts";
+    std::string phone = "010-8591-7245";
+    std::string email = "curry1115@naver.com";
+    std::string address = "서울시 광진구 능동로16길"
+} t_profile;
