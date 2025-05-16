@@ -28,14 +28,19 @@ int main(void)
     cin >> a >> b;
     arr[0][0] = {a + b - 2, a, b, w, w};
     arr[0][1] = {2 * w - (a + b), 1, 1, a, b};
-     
+
     for (int i = 1; i < w; i++)
     {
         int accidentI, accidentJ;
 
         cin >> accidentI >> accidentJ;
 
-        int carOneDist 
+        int zeroDist = min(abs(arr[i - 1][0].carOneI - accidentI) + abs(arr[i - 1][0].carOneJ - accidentJ), 
+            abs(arr[i - 1][0].carTwoI - accidentI) + abs(arr[i - 1][]));
+        arr[i][0] = {}
+        
+        int oneDist = 
+        arr[i][1] = {}
     }
 
     cout << dist << "\n";
