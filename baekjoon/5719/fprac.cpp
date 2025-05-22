@@ -1,6 +1,7 @@
 #include <iostream>
 #include <queue>
 #include <vector>
+#include <climits>
 
 using namespace std;
 
@@ -31,9 +32,9 @@ typedef struct s_history
 {
     int nodeNum;
     int sum;
-    vector<pair<int, int>> history;
+    // vector<pair<int, int>> history;
 
-    s_history(int n, int s, vector<pair<int, int>> h = {}) : nodeNum(n), sum(s), history(h) {}
+    // s_history(int n, int s, vector<pair<int, int>> h = {}) : nodeNum(n), sum(s), history(h) {}
 
     bool operator<(const s_history n) const
     {
@@ -69,11 +70,41 @@ int getAlmostMinDist(vector<vector<t_mapNode>> map)
     return (-1);
 }
 
+void removeShortestPathEdges(vector<vector<t_mapNode>> &map, vector<vector<int>> &prv, int cur) {
+    queue<int> q;
+    q.push(cur);
+
+    while (!q.empty()) {
+        int now = q.front();
+        q.pop();
+
+        for (int prev : prv[now]) {
+            // prev -> now 로 가는 간선을 삭제
+            auto &edges = map[prev];
+            for (auto it = edges.begin(); it != edges.end(); ) {
+                if (it->nextNodeNum == now) {
+                    it = edges.erase(it); // 해당 간선 삭제
+                } else {
+                    ++it;
+                }
+            }
+
+            q.push(prev);
+        }
+    }
+}
+
+
+
 int getMinDist(vector<vector<t_mapNode>> &map)
 {
     int minValue = -1;
     priority_queue<t_history> q;
+    vector<int> lastNode(n + 1, INT_MAX);
+    vector<int> dist(n + 1, INT_MAX);
+    vector<vector<int>> prv(n + 1);
 
+    dist[start] = 0;
     t_history firstNode = {start, 0};
     q.push(firstNode);
 
@@ -82,23 +113,21 @@ int getMinDist(vector<vector<t_mapNode>> &map)
         t_history poppedNode = q.top();
         q.pop();
 
-        // cout << "nodeNum is " << poppedNode.nodeNum << endl;
+        int cur = poppedNode.nodeNum;
+        int cost = poppedNode.sum;
+
         if (poppedNode.nodeNum == endNum)
         {
-            // cout << "reached endNum, dist is " << poppedNode.sum << endl;
-
             if (minValue == -1)
             {
-                // cout << "minValue is -1\n";
                 minValue = poppedNode.sum;
-                for (auto itr = poppedNode.history.begin(); itr != poppedNode.history.end(); itr++)
-                    map[itr->first][itr->second].distance = 1001;
+                //put 1001 
+                removeShortestPathEdges(map, prv, endNum);
             }
             else if (minValue == poppedNode.sum)
             {
-                // cout << "minValue is " << minValue << endl;
-                for (auto itr = poppedNode.history.begin(); itr != poppedNode.history.end(); itr++)
-                    map[itr->first][itr->second].distance = 1001;
+                //put 1001
+                removeShortestPathEdges(map, prv, endNum);
             }
             else
                 break;
@@ -106,9 +135,24 @@ int getMinDist(vector<vector<t_mapNode>> &map)
 
         for (int i = 0; i < map[poppedNode.nodeNum].size(); i++)
         {
-            t_history newNode = {map[poppedNode.nodeNum][i].nextNodeNum, map[poppedNode.nodeNum][i].distance + poppedNode.sum, poppedNode.history};
-            newNode.history.push_back(make_pair(poppedNode.nodeNum, i));
-            q.push(newNode);
+            int next = map[poppedNode.nodeNum][i].nextNodeNum;
+            int ncost = map[poppedNode.nodeNum][i].distance;
+            t_history newNode = {map[poppedNode.nodeNum][i].nextNodeNum, map[poppedNode.nodeNum][i].distance + poppedNode.sum};
+            // newNode.history.push_back(make_pair(poppedNode.nodeNum, i));
+
+            if (dist[next] == dist[cur] + ncost) {
+				prv[next].push_back(cur);
+			}
+
+			if (dist[next] > dist[cur] + ncost) {
+				prv[next].clear();
+				prv[next].push_back(cur);
+				dist[next] = dist[cur] + ncost;
+				// pq.push(make_pair(dist[next], next));
+                q.push(newNode);
+			}
+
+            // q.push(newNode);
         }
     }
     return (-1);
