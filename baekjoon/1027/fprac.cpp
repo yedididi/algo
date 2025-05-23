@@ -1,16 +1,59 @@
 #include <iostream>
+#include <vector>
+#include <climits>
+#include <algorithm>
 
 using namespace std;
 
-int main(void)
-{
+vector<int> buildings;
 
+bool checkInSight(int myBuilding, int otherBuilding)
+{
+    int start = otherBuilding, end = myBuilding;
+    if (myBuilding < otherBuilding)
+    {
+        start = myBuilding;
+        end = otherBuilding;
+    }
+
+    for (int k = start + 1; k < end; k++)
+    {
+        long long kHeight = 1LL * (otherBuilding - myBuilding) * buildings[k];
+        long long graphValue = (1LL * (buildings[otherBuilding] - buildings[myBuilding]) * (k - myBuilding)) + (1LL * buildings[myBuilding] * (otherBuilding - myBuilding));
+
+        // cout << "kHeight is:" << kHeight << ", graphValue is:" << graphValue << endl;
+
+        if (abs(kHeight) >= abs(graphValue))
+            return (false);
+    }
+    return (true);
 }
 
-1    5    3    2    6    3    2    6    4    2    5    7    3    1    5  
-0,0  1,1  1,5  2,5  3,5  1,6  2,6  3,6  1,6  2,4  3 4 1 2 3
+int main(void)
+{
+    int n;
+    int maxSum = INT_MIN;
 
-반복 돌리면서
-직전 노드의 최상층빌딩과 현재 빌딩의 높이와 연결해서 
+    cin >> n;
+    for (int i = 0; i < n; i++)
+    {
+        int tmp;
+        cin >> tmp;
+        buildings.push_back(tmp);
+    }
 
-dp[51][2][2] = {<- 빌딩개수, 가장 높은 빌딩} {-> 빌딩 개수, 가장 높은 빌딩}
+    for (int i = 0; i < n; i++)
+    {
+        int sum = 0;
+        for (int j = 0; j < n; j++)
+        {
+            if (i == j)
+                continue;
+            if (checkInSight(i, j) == true)
+                sum++;
+        }
+        // cout << "i is:" << i << ", sum is:" << sum << endl;
+        maxSum = max(maxSum, sum);
+    }
+    cout << maxSum << endl;
+}
