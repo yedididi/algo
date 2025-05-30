@@ -14,6 +14,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include <errno.h>
+#include <climit.h>
 
 #define BUF_SIZE 100
 #define MAX_CLNT 32
