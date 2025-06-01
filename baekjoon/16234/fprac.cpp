@@ -5,28 +5,28 @@
 using namespace std;
 
 int n, l, r;
-vector<vector<int>> population(51, vector<int>(51, 0));
-bool extVisited[51][51];
+vector<vector<int>> population(55, vector<int>(55, 0));
+bool extVisited[55][55];
 bool flag = false;
 int iNum[4] = {0, 0, 1, -1};
 int jNum[4] = {1, -1, 0, 0};
 
 void printMap()
 {
+    cout << "\n";
     for (int i = 1; i <= n; i++)
     {
         for (int j = 1; j <= n; j++)
             cout << population[i][j] << " ";
         cout << "\n";
     }
-    cout << "\n";
 }
 
 void bfs(int startI, int startJ)
 {
     int populationSum = 0;
     int countryCount = 0;
-    bool internalVisited[51][51];
+    bool internalVisited[55][55];
     queue<pair<int, int>> q;
     q.push(make_pair(startI, startJ));
 
@@ -47,9 +47,14 @@ void bfs(int startI, int startJ)
             int newJ = poppedNode.second + jNum[index];
             int difference = abs(population[poppedNode.first][poppedNode.second] - population[newI][newJ]);
 
+            // if (newI == 2 && newJ == 2)
+            // {
+            //     cout << "difference:" << difference << endl;
+            // }
+
             if (newI <= 0 || newI > n || newJ <= 0 || newJ > n)
                 continue;
-            if (extVisited[newI][newJ]) //should i check internalVisited too?
+            if (internalVisited[newI][newJ] || extVisited[newI][newJ]) //should i check internalVisited too?
                 continue;
             if (difference < l || difference > r)
                 continue;
@@ -62,14 +67,14 @@ void bfs(int startI, int startJ)
 
             q.push(make_pair(newI, newJ));
         }
+    }
 
-        for (int i = 1; i <= n; i++)
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = 1; j <= n; j++)
         {
-            for (int j = 1; j <= n; j++)
-            {
-                if (internalVisited[i][j] == true)
-                    population[i][j] = populationSum / countryCount;
-            }
+            if (internalVisited[i][j] == true)
+                population[i][j] = populationSum / countryCount;
         }
     }
 }
@@ -119,7 +124,7 @@ int main(void)
         
         count++;
         flag = false;
-        printMap();
+        // printMap();
     }
 
     cout << count << endl;
