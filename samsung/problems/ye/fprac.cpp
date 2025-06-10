@@ -104,7 +104,46 @@ int getScore(void)
 
 void rotate(void)
 {
+    vector<vector<int>> newMap(30, vector<int>(30, 0));
 
+    //rotate cross reverse clockwise
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            int oldI = 0 + i;
+            int oldJ = 0 + j;
+            if (i == (n / 2) || j == (n / 2))
+            {
+                int newI = 0 + (n - 1) - j;
+                int newJ = 0 + i;
+
+                newMap[newI][newJ] = map[oldI][oldJ];
+            }
+        }
+    }
+
+    //rotate four squares clockwise
+    int startI[4] = {0, 0, (n / 2) + 1, (n / 2) + 1};
+    int startJ[4] = {0, (n / 2) + 1, 0, (n / 2) + 1};
+  
+    for (int num = 0; num < 4; num++)
+    {
+        for (int i = 0; i < (n / 2); i++)
+        {
+            for (int j = 0; j < (n / 2); j++)
+            {
+                int oldI = startI[num] + i;
+                int oldJ = startJ[num] + j;
+                int newI = startI[num] + j;
+                int newJ = startJ[num] + ((n / 2) - 1) - i;
+
+                newMap[newI][newJ] = map[oldI][oldJ];
+            }
+        }
+    }
+
+    map = newMap;
 }
 
 int main(void)
