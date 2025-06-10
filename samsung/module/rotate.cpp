@@ -42,3 +42,35 @@ int main() {
 
     return 0;
 }
+
+void clockwise_and_reverse(void)
+{
+    //clockwise
+    for (int i = 0; i < squareSize; i++)
+    {
+        for (int j = 0; j < squareSize; j++)
+        {
+            int oldI = startI + i;
+            int oldJ = startJ + j;
+            int newI = startI + j;
+            int newJ = startJ + (squareSize - 1) - i;
+
+            newMap[newI][newJ] = oldMap[oldI][oldJ];
+        }
+    }
+
+    //reverse
+    for (int i = 0; i < squareSize; i++)
+    {
+        for (int j = 0; j < squareSize; j++)
+        {
+            int oldI = startI + i;
+            int oldJ = startJ + j;
+            // 반시계 방향 회전 공식 적용
+            int newI = startI + (squareSize - 1) - j;
+            int newJ = startJ + i;
+
+            newMap[newI][newJ] = oldMap[oldI][oldJ];
+        }
+    }
+}
