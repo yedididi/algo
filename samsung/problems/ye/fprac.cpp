@@ -6,6 +6,7 @@
 using namespace std;
 
 void input(void);
+void printMap(vector<vector<int>> printMap);
 
 int n = 0, sum = 0;
 int iNum[4] = {0, 0, 1, -1};
@@ -23,9 +24,11 @@ void fillGroups(vector<vector<int>> &groups, vector<t_groupInfo> &groupInfos, in
 {
     int groupMemberCount_ = 1;
     queue<pair<int, int>> q;
+    vector<vector<bool>> visited(30, vector<bool>(30, 0));
 
     q.push(make_pair(startI, startJ));
     groups[startI][startJ] = groupNum;
+    visited[startI][startJ] = true;
 
     while (!q.empty())
     {
@@ -41,29 +44,32 @@ void fillGroups(vector<vector<int>> &groups, vector<t_groupInfo> &groupInfos, in
 
             if (newI < 0 || newI >= n || newJ < 0 || newJ >= n) continue;
             if (map[newI][newJ] != map[startI][startJ]) continue;
+            if (visited[newI][newJ]) continue;
 
             groups[newI][newJ] = groupNum;
             groupMemberCount_++;
+            visited[newI][newJ] = true;
+            q.push(make_pair(newI, newJ));
         }
     }
     t_groupInfo newGroupInfo = {groupNum, groupMemberCount_, map[startI][startJ]};
     groupInfos.push_back(newGroupInfo);
 }
 
-int getScore(void)
+void getScore(void)
 {
     int currentScore = 0;
     int groupNum = 1;
     vector<vector<int>> groups(30, vector<int>(30, 0));
     vector<t_groupInfo> groupInfos;
-    vector<vector<int>> neiboringLines(30, vector<int>(30, 0));
+    vector<vector<int>> neiboringLines(900, vector<int>(900, 0));
 
     //seperate
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
         {
-            if (groups[i][j] != 0)
+            if (groups[i][j] == 0)
             {
                 fillGroups(groups, groupInfos, groupNum, i, j);
                 groupNum++;
@@ -83,10 +89,9 @@ int getScore(void)
                 
                 if (newI < 0 || newI >= n || newJ < 0 || newJ >= n) continue;
 
-                if (groups[i][j] != groups[newI][newJ]) continue;
+                if (groups[i][j] == groups[newI][newJ]) continue;
 
                 neiboringLines[groups[i][j]][groups[newI][newJ]]++;
-                // neiboringLines[groups[newI][newJ]][groups[i][j]]++;
             }
         }
     }
@@ -104,7 +109,7 @@ int getScore(void)
 
 void rotate(void)
 {
-    vector<vector<int>> newMap(30, vector<int>(30, 0));
+    auto newMap(map);
 
     //rotate cross reverse clockwise
     for (int i = 0; i < n; i++)
@@ -168,5 +173,15 @@ void input(void)
         {
             cin >> map[i][j];
         }
+    }
+}
+
+void printMap(vector<vector<int>> printMap)
+{
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+            cout << printMap[i][j] << " ";
+        cout << "\n";
     }
 }
