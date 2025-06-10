@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <queue>
 
 using namespace std;
 
@@ -42,11 +44,23 @@ struct maxComp
 int n, m, k;
 int minimumAttackPoint = INT_MAX, maximumAttackPoint = INT_MIN;
 int potapNum = 0;
-vector<vector<t_node>> map(10, vector<t_node>(10));
+vector<vector<t_node>> map;
 
-void chooseAttacker(void)
+pair<int, int> chooseAttacker(void)
 {
+    priority_queue<t_node> pq;
 
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+        {
+            if (map[i][j].attackPoint == minimumAttackPoint)
+                pq.push(map[i][j]);
+        }   
+    }
+    pair<int, int> attacker = make_pair(pq.top().i, pq.top().j);
+    map[attacker.first][attacker.second].attackPoint += (n + m);
+    return (attacker);
 }
 
 void attack(void)
@@ -56,7 +70,7 @@ void attack(void)
 
 void fix(void)
 {
-    
+
 }
 
 int main(void)
@@ -65,9 +79,11 @@ int main(void)
 
     for (int time = 0; time < k; time++)
     {
-        chooseAttacker();
-        attack();
-        fix();
+        pair<int, int> attacker = chooseAttacker();
+        cout << "min: " << minimumAttackPoint << ", max:" << maximumAttackPoint << endl;
+        cout << attacker.first << ", " << attacker.second << endl;
+        // attack();
+        // fix();
 
     }
 }
@@ -75,6 +91,10 @@ int main(void)
 void input(void)
 {
     cin >> n >> m >> k;
+
+    t_node initialNode = {0, 0, 0, 0, 0};
+
+    map.resize(n, vector<t_node>(m, initialNode));
 
     for (int i = 0; i < n; i++)
     {
@@ -86,7 +106,8 @@ void input(void)
             if (tmp > 0)
                 potapNum++;
             maximumAttackPoint = max(maximumAttackPoint, tmp);
-            minimumAttackPoint = min(minimumAttackPoint, tmp);
+            if (tmp != 0)
+                minimumAttackPoint = min(minimumAttackPoint, tmp);
             map[i][j] = {i, j, tmp, 0, 0};
         }
     }
