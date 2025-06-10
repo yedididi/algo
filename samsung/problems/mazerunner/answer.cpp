@@ -21,23 +21,11 @@ int main(void)
 
     for (int time = 1; time <= k; time++)
     {
-        // cout << "\ntime " << time << ", mvCount " << totalMoveCount << ", initial state:\n";
-        // printMap();
-
         movePlayers();
-
-        // cout << "\ntime " << time << ", mvCount " << totalMoveCount << ", after moving:\n";
-        // printMap();
-
         if (playerTotalCount == 0)
             break;
-
         rotateSquare();
-
-        // cout << "\ntime " << time << ", mvCount " << totalMoveCount << ", after rotate:\n";
-        // printMap();
     }
-
     cout << totalMoveCount << "\n" << exitCoordinate.first << " " << exitCoordinate.second << endl;
 }
 
