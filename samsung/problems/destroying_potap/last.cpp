@@ -95,7 +95,7 @@ bool tryLaserAttack(pair<int, int> attacker, pair<int, int> attackee)
     queue<pair<int, int>> q;
     pair<int, int> firstNode = {attacker.first, attacker.second};
     vector<vector<bool>> visited(n + 1, vector<bool>(m + 1, 0));
-    pair<int, int> parent[n + 1][m + 1];
+    pair<int, int> parent[n][m];
 
     visited[attacker.first][attacker.second] = true;
     q.push(firstNode);
@@ -121,24 +121,42 @@ bool tryLaserAttack(pair<int, int> attacker, pair<int, int> attackee)
             // cout << "attacker.first: " << attacker.first << ", attacker.second: " << attacker.second << "\n";
             // cout << "start coordinates:" << attackee.first << ", " << attackee.second << "\n";
             
-            while (!(currentI == -1 && currentJ == -1))
+            // while (1)
+            // {
+            //     // cout << "\n*****INSIDE WHILE*********, currentI:" << currentI << ", currentJ:" << currentJ;
+            //     map[currentI][currentJ].lastAttackedTime = globalTime;
+            //     // cout << ", lastAttackedTime: " << map[currentI][currentJ].lastAttackedTime << "\n";
+
+            //     if (currentI == attacker.first && currentJ == attacker.second)
+            //         break;
+
+            //     map[currentI][currentJ].attackPoint -= (map[attacker.first][attacker.second].attackPoint / 2);
+
+            //     int tmpCurrentI = parent[currentI][currentJ].first;
+            //     int tmpCurrentJ = parent[currentI][currentJ].second;
+
+            //     if (tmpCurrentI == -1 && tmpCurrentJ == -1)
+            //         break;
+                
+            //     currentI = tmpCurrentI;
+            //     currentJ = tmpCurrentJ;
+            // }
+            while (currentI != attacker.first || currentJ != attacker.second)
             {
-                // cout << "\n*****INSIDE WHILE*********, currentI:" << currentI << ", currentJ:" << currentJ;
+                if (currentI != attackee.first || currentJ != attackee.second) // Don't damage the attackee again
+                {
+                    map[currentI][currentJ].attackPoint -= (map[attacker.first][attacker.second].attackPoint / 2);
+                }
                 map[currentI][currentJ].lastAttackedTime = globalTime;
-                // cout << ", lastAttackedTime: " << map[currentI][currentJ].lastAttackedTime << "\n";
-
-                if (currentI == attacker.first && currentJ == attacker.second)
-                    break;
-
-                map[currentI][currentJ].attackPoint -= (map[attacker.first][attacker.second].attackPoint / 2);
 
                 int tmpCurrentI = parent[currentI][currentJ].first;
                 int tmpCurrentJ = parent[currentI][currentJ].second;
+
+                if (tmpCurrentI == -1 && tmpCurrentJ == -1)
+                    break;
                 
                 currentI = tmpCurrentI;
                 currentJ = tmpCurrentJ;
-                if (currentI < 0 || currentJ < 0)
-                    cout << "out of bounds\n";
             }
             return (true);
         }
@@ -175,24 +193,17 @@ void attack(void)
     if (tryLaserAttack(attacker, attackee) == true)
         return;
 
-    // if (attacker.first < 0 || attacker.first >= n || attacker.second < 0 || attacker.second >= m)
-    // {
-    //     cout << "attacker.first: " << attacker.first << ", attacker.second: " << attacker.second << "\n";
-    //     cout << "attacker.attackPoint: " << map[attacker.first][attacker.second].attackPoint << "\n";
-    // }
-    map[attackee.first][attackee.second].attackPoint -= (map[attacker.first][attacker.second].attackPoint);
-    // cout << "after attackee.first: " << attackee.first << ", attackee.second: " << attackee.second << "\n";
-    // cout << "after attackee.attackPoint: " << map[attackee.first][attackee.second].attackPoint << "\n";
-
+    map[attackee.first][attackee.second].attackPoint -= map[attacker.first][attacker.second].attackPoint;
     map[attackee.first][attackee.second].lastAttackedTime = globalTime;
+    
     map[attacker.first][attacker.second].lastAttackTime = globalTime;
-
-    // cout << "before for\n";
 
     for (int index = 0; index < 8; index++)
     {
         int newI = (attackee.first + iNum[index] + n) % n;
         int newJ = (attackee.second + jNum[index] + m) % m;
+
+        if (newI == attacker.first && newJ == attacker.second) continue;
 
         if (map[newI][newJ].attackPoint > 0)
         {
@@ -200,39 +211,35 @@ void attack(void)
             map[newI][newJ].lastAttackedTime = globalTime;
         }
     }
-    // cout << "after for\n";
+    // cout << "didn't attack with laser\n";
 }
 
 void fix(void)
 {
     maximumAttackPoint = INT_MIN;
     minimumAttackPoint = INT_MAX;
+    int currentPotapNum = 0;
 
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < m; j++)
         {
-            if (map[i][j].attackPoint <= 0 && map[i][j].lastAttackedTime == globalTime)
+            if (map[i][j].attackPoint <= 0)
             {
-                potapNum--;
                 map[i][j].attackPoint = 0;
                 continue;
             }
+
+            currentPotapNum++;
             
-            if (map[i][j].lastAttackedTime != globalTime && map[i][j].lastAttackTime != globalTime)
+            if (map[i][j].lastAttackedTime != globalTime && map[i][j].lastAttackTime != globalTime && map[i][j].attackPoint > 0)
                 map[i][j].attackPoint++;
             
             maximumAttackPoint = max(maximumAttackPoint, map[i][j].attackPoint);
             minimumAttackPoint = min(minimumAttackPoint, map[i][j].attackPoint);
         }
     }
-    // cout << "inside fix, maximumAttackPoint: " << maximumAttackPoint << "\n";
-    // cout << "inside fix, minimumAttackPoint: " << minimumAttackPoint << "\n";
-    // if (maximumAttackPoint == 30 && minimumAttackPoint == 30)
-    // {
-    //     cout << "potapNum : " << potapNum << "\n";
-    //     printMap();
-    // }
+    potapNum = currentPotapNum;
 }
 
 void printBiggestAttackPoint(void)
@@ -257,19 +264,19 @@ int main(void)
     for (int time = 1; time <= k; time++)
     {
         globalTime = time;
-        // cout << "before attack\n";
         attack();
 
-        // cout << "\nafter attack\n";
+        cout << "\nafter attack\n";
         // printMap();
 
+        // if (potapNum == 1)
+        //     break;
+
+        fix();
         if (potapNum == 1)
             break;
-        // cout << "before fix\n";
-        fix();
-
-        // cout << "\nafter fix\n";
-        // printMap();
+        cout << "\nafter fix\n";
+        printMap();
     }
     printBiggestAttackPoint();
 }
@@ -312,13 +319,20 @@ void printMap()
     cout << "\n";
 }
 
-/*
-5 10 704
-0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 2186
-0 0 0 0 4346 0 0 0 0 0
-0 0 0 0 3889 3148 1500 0 0 0
-0 3440 0 0 17 0 0 0 0 0
 
-36
+/*
+10 6 1000
+3362 3908 4653 3746 4119 3669
+4174 0 0 868 1062 854
+633 51 759 0 4724 1474
+2735 365 1750 3382 498 1672
+141 3700 0 436 2752 974
+3494 0 4719 2016 3870 0
+3357 0 4652 3468 0 3758
+4610 3125 0 2364 3303 1904
+0 0 0 0 3959 3324
+3187 0 105 2821 3642 160
+
+answer: 727
+
 */
