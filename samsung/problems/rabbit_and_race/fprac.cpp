@@ -54,7 +54,7 @@ int jNum[4] = {1, -1, 0, 0};
 unordered_map<int, t_rabbitIinfo> rabbitInfo;
 int globalTime = 0;
 int minusValue = 0;
-    priority_queue<t_rabbitIinfo> pq;
+priority_queue<t_rabbitIinfo> pq;
 
 int fillPQ(void)
 {
