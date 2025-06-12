@@ -54,10 +54,10 @@ int jNum[4] = {1, -1, 0, 0};
 unordered_map<int, t_rabbitIinfo> rabbitInfo;
 int globalTime = 0;
 int minusValue = 0;
-
-int chooseRabbit(void)
-{
     priority_queue<t_rabbitIinfo> pq;
+
+int fillPQ(void)
+{
     for (const auto &entry : rabbitInfo)
     {
         pq.push(entry.second);
@@ -67,14 +67,14 @@ int chooseRabbit(void)
 
 int chooseFinalRabbit(void)
 {
-    priority_queue<t_rabbitIinfo, vector<t_rabbitIinfo>, reverseComp> pq;
+    priority_queue<t_rabbitIinfo, vector<t_rabbitIinfo>, reverseComp> pq_final;
 
     for (const auto &entry : rabbitInfo)
     {
         if (entry.second.lastJumpTime == globalTime)
-            pq.push(entry.second);
+            pq_final.push(entry.second);
     }
-    return (pq.top().pid);
+    return (pq_final.top().pid);
 }
 
 
@@ -137,8 +137,9 @@ void startRace(void)
 
     for (int i = 0; i < k; i++)
     {
-        int pid = chooseRabbit();
+        int pid = pq.top().pid;
         t_rabbitIinfo &chosenRabbit = rabbitInfo[pid];
+        pq.pop();
 
         pair<int, int> finalCoordinate = {-1, -1};
 
@@ -169,6 +170,7 @@ void startRace(void)
         minusValue += (finalCoordinate.first + finalCoordinate.second + 2);
         chosenRabbit.jumpCount++;
         chosenRabbit.lastJumpTime = globalTime;
+        pq.push(chosenRabbit);
         // cout << "chosenRabbit: " << chosenRabbit.pid << " at (" << chosenRabbit.i << ", " << chosenRabbit.j << "), score is " << chosenRabbit.score + minusValue << endl;
     }
 
@@ -199,6 +201,7 @@ void printBiggestScore(void)
 int main(void)
 {
     input();
+    fillPQ();
 
     while (1)
     {
