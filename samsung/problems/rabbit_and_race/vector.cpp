@@ -1,5 +1,5 @@
 #include <iostream>
-#include <unordered_map>
+#include <vector>
 #include <queue>
 #include <climits>
 
@@ -15,10 +15,8 @@ typedef struct s_rabbitInfo
     int mvDistance;
     int score;
     int lastJumpTime;
-    int minusValue;
 
-    s_rabbitInfo(int i_ = 0, int j_ = 0, int jumpCount_ = 0, int pid_ = 0, int mvDistance_ = 0, int score_ = 0, int lastJumpTime_ = 0, int minusValue_ = 0)
-        : i(i_), j(j_), jumpCount(jumpCount_), pid(pid_), mvDistance(mvDistance_), score(score_), lastJumpTime(lastJumpTime_), minusValue(minusValue_) {}
+    s_rabbitInfo(int i_, int j_, int jumpCount_, int pid_, int mvDistance_, int score_, int lastJumpTime_) : i(i_), j(j_), jumpCount(jumpCount_), pid(pid_), mvDistance(mvDistance_), score(score_), lastJumpTime(lastJumpTime_) {}
 
     bool operator<(const s_rabbitInfo &newInfo) const
     {
@@ -38,6 +36,8 @@ struct reverseComp
 {
     bool operator()(const s_rabbitInfo &a, const s_rabbitInfo &b) const
     {
+        if (a.jumpCount != b.jumpCount)
+            return (a.jumpCount < b.jumpCount);
         if ((a.i + a.j) != (b.i + b.j))
             return ((a.i + a.j) < (b.i + b.j));
         if (a.i != b.i)
@@ -48,19 +48,19 @@ struct reverseComp
     }
 };
 
-int totalNum, hundred, n, m, p;
+int n, m, p;
 int iNum[4] = {0, 0, 1, -1};
 int jNum[4] = {1, -1, 0, 0};
-unordered_map<int, t_rabbitIinfo> rabbitInfo;
+vector<t_rabbitIinfo> rabbitInfo;
 int globalTime = 0;
-int minusValue = 0;
 
 int chooseRabbit(void)
 {
     priority_queue<t_rabbitIinfo> pq;
-    for (const auto &entry : rabbitInfo)
+
+    for (vector<t_rabbitIinfo>::iterator itr = rabbitInfo.begin(); itr != rabbitInfo.end(); itr++)
     {
-        pq.push(entry.second);
+        pq.push(*itr);
     }
     return (pq.top().pid);
 }
@@ -69,14 +69,13 @@ int chooseFinalRabbit(void)
 {
     priority_queue<t_rabbitIinfo, vector<t_rabbitIinfo>, reverseComp> pq;
 
-    for (const auto &entry : rabbitInfo)
+    for (auto itr = rabbitInfo.begin(); itr != rabbitInfo.end(); itr++)
     {
-        if (entry.second.lastJumpTime == globalTime)
-            pq.push(entry.second);
+        if (itr->lastJumpTime == globalTime)
+            pq.push(*itr);
     }
     return (pq.top().pid);
 }
-
 
 pair<int, int> moveRabbits(int oldI, int oldJ, int iNum_, int jNum_, int mvDistance)
 {
@@ -137,49 +136,35 @@ void startRace(void)
 
     for (int i = 0; i < k; i++)
     {
-        int pid = chooseRabbit();
-        t_rabbitIinfo &chosenRabbit = rabbitInfo[pid];
-
+        t_rabbitIinfo chosenRabbit = rabbitInfo[chooseRabbit()];
         pair<int, int> finalCoordinate = {-1, -1};
 
         for (int index = 0; index < 4; index++)
         {
             pair<int, int> newCoordinate = moveRabbits(chosenRabbit.i, chosenRabbit.j, iNum[index], jNum[index], chosenRabbit.mvDistance);
 
-            if ((newCoordinate.first + newCoordinate.second) != (finalCoordinate.first + finalCoordinate.second))
-            {
-                if ((newCoordinate.first + newCoordinate.second) > (finalCoordinate.first + finalCoordinate.second))
-                    finalCoordinate = newCoordinate;
-            }
-            else if ((newCoordinate.first != finalCoordinate.first))
-            {
-                if ((newCoordinate.first > finalCoordinate.first))
-                    finalCoordinate = newCoordinate;
-            }
-            else if (newCoordinate.second != finalCoordinate.second)
-            {
-                if (newCoordinate.second > finalCoordinate.second)
-                    finalCoordinate = newCoordinate;
-            }
+            if ((newCoordinate.first + newCoordinate.second) > (finalCoordinate.first + finalCoordinate.second))
+                finalCoordinate = newCoordinate;
+            else if (newCoordinate.first > finalCoordinate.first)
+                finalCoordinate = newCoordinate;
+            else if (newCoordinate.second > finalCoordinate.second)
+                finalCoordinate = newCoordinate;
         }
-
         chosenRabbit.i = finalCoordinate.first;
         chosenRabbit.j = finalCoordinate.second;
-        chosenRabbit.score -= (finalCoordinate.first + finalCoordinate.second + 2);
-        minusValue += (finalCoordinate.first + finalCoordinate.second + 2);
-        chosenRabbit.jumpCount++;
+        chosenRabbit.score -= (finalCoordinate.first + finalCoordinate.second);
         chosenRabbit.lastJumpTime = globalTime;
-        // cout << "chosenRabbit: " << chosenRabbit.pid << " at (" << chosenRabbit.i << ", " << chosenRabbit.j << "), score is " << chosenRabbit.score + minusValue << endl;
+        cout << "chosenRabbit: " << chosenRabbit.pid << " at (" << chosenRabbit.i << ", " << chosenRabbit.j << ")" << endl;
     }
-
-    int finalPid = chooseFinalRabbit();
-    rabbitInfo[finalPid].score += s;
+    t_rabbitIinfo finalChosenRabbit = rabbitInfo[chooseFinalRabbit()];
+    finalChosenRabbit.score += s;
 }
 
 void changeDistance(void)
 {
     int pid, l;
     cin >> pid >> l;
+
     rabbitInfo[pid].mvDistance *= l;
 }
 
@@ -187,11 +172,10 @@ void printBiggestScore(void)
 {
     int maxScore = INT_MIN;
 
-    for (const auto &entry : rabbitInfo)
+    for (auto itr = rabbitInfo.begin(); itr != rabbitInfo.end(); itr++)
     {
-        if (entry.second.score + minusValue > maxScore)
-            maxScore = entry.second.score + minusValue;
-        // cout << "Rabbit " << entry.second.pid << " has score: " << entry.second.score + minusValue << endl;
+        if (itr->score > maxScore)
+            maxScore = itr->score;
     }
     cout << maxScore << endl;
 }
@@ -218,12 +202,14 @@ int main(void)
 
 void input(void)
 {
-    cin >> totalNum >> hundred >> n >> m >> p;
+    cin >> n >> m >> p;
+    t_rabbitIinfo sampleInfo = {0, 0, 0, 0, 0, 0, 0};
+    rabbitInfo.resize(10000000, sampleInfo);
 
     for (int i = 0; i < p; i++)
     {
         int pid, distance;
         cin >> pid >> distance;
-        rabbitInfo[pid] = {0, 0, 0, pid, distance, 0, 0, 0};
+        rabbitInfo[pid] = {0, 0, 0, pid, distance, 0, 0};
     }
 }
