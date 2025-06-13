@@ -7,6 +7,7 @@
         "vector": "cpp",
         "string.h": "c",
         "set": "cpp",
-        "ratio": "cpp"
+        "ratio": "cpp",
+        "queue": "cpp"
     }
 }
