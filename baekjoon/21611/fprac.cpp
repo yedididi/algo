@@ -57,10 +57,10 @@ void moveMarbles(void)
     }
     for (pair<int, int> coord : coordinates)
     {
-        newMap[coord.first][coord.second] = marbles.front();
-        marbles.pop();
         if (marbles.empty())
             break;
+        newMap[coord.first][coord.second] = marbles.front();
+        marbles.pop();
     }
     map = newMap;
 }
@@ -81,9 +81,10 @@ void blizzardAttack(int direction, int distance)
 
         map[newI][newJ] = 0;
     }
+    // cout << "after shooting" << endl;
+    // printMap();
     moveMarbles();
 }
-
 
 void explodeMarbles(void)
 {
@@ -150,7 +151,7 @@ void changeMarbles(void)
     vector<vector<int>> newMap(n, vector<int>(n, 0));
     queue<int> newMarbles;
     int marbleName = map[coordinates[0].first][coordinates[0].second];
-    int marbleCount = 1;
+    int marbleCount = 0;
     
     for (pair<int, int> coord : coordinates)
     {
@@ -162,8 +163,6 @@ void changeMarbles(void)
             marbleCount++;
         else
         {
-            if (marbleCount == 0 && marbleName == 0)
-                // cout << "coord: " << coord.first << ", " << coord.second << " marbleName: " << marbleName << endl;
             newMarbles.push(marbleCount);
             newMarbles.push(marbleName);
             marbleName = map[coord.first][coord.second];
@@ -171,12 +170,18 @@ void changeMarbles(void)
         }
     }
 
+    if (marbleCount > 0)
+    {
+        newMarbles.push(marbleCount);
+        newMarbles.push(marbleName);
+    }
+
     for (pair<int, int> coord : coordinates)
     {
-        newMap[coord.first][coord.second] = newMarbles.front();
-        newMarbles.pop();
         if (newMarbles.empty())
             break;
+        newMap[coord.first][coord.second] = newMarbles.front();
+        newMarbles.pop();
     }
     map = newMap;
 }
@@ -185,9 +190,11 @@ int main(void)
 {
     input();
     fillCoordinates();
+    int num = 1;
 
     for (auto itr = attackInfo.begin(); itr != attackInfo.end(); itr++)
     {
+        // cout << "\nno." << num++ << endl;
         blizzardAttack(itr->first, itr->second);
         // cout << "after blizzard attack" << endl;
         // printMap();
