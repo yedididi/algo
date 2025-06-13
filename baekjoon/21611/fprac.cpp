@@ -81,8 +81,6 @@ void blizzardAttack(int direction, int distance)
 
         map[newI][newJ] = 0;
     }
-    // cout << "after shooting" << endl;
-    // printMap();
     moveMarbles();
 }
 
@@ -135,8 +133,6 @@ void explodeMarbles(void)
         explodeCount[marbleName] += marbleCount;
     }
 
-    // cout << "\nafter one explosion" << endl;
-    // printMap();
     if (didItExplode == true)
     {
         moveMarbles();
@@ -155,7 +151,6 @@ void changeMarbles(void)
     
     for (pair<int, int> coord : coordinates)
     {
-        // cout << "coord: " << coord.first << ", " << coord.second << endl;
         if (map[coord.first][coord.second] == 0)
             continue;
         
@@ -190,20 +185,12 @@ int main(void)
 {
     input();
     fillCoordinates();
-    int num = 1;
 
     for (auto itr = attackInfo.begin(); itr != attackInfo.end(); itr++)
     {
-        // cout << "\nno." << num++ << endl;
         blizzardAttack(itr->first, itr->second);
-        // cout << "after blizzard attack" << endl;
-        // printMap();
         explodeMarbles();
-        // cout << "after explode marbles" << endl;
-        // printMap();
         changeMarbles();
-        // cout << "after change marbles" << endl;
-        // printMap();
     }
 
     cout << explodeCount[1] + 2 * explodeCount[2] + 3 * explodeCount[3] << endl;
