@@ -1,77 +1,102 @@
+
+// {
+//     vector<vector<pair<int, int>>> parent(n, vector<pair<int, int>>(m,0));
+
+//     parent[newI][newJ] = poppedNode;
+
+//     oldI = startI + i;
+//     oldJ = startJ + j;
+
+//     //90 clock
+//     newI = startI + j;
+//     newJ = startJ + (squareSize - 1) - i;
+
+//     //180
+//     newI = startI + (squareSize - 1 - i);
+//     newJ = startJ + (squareSize - 1 - j);
+
+//     //270
+//     newI = startI + (squareSize - 1) - j;
+//     newJ = startJ + i;
+// }
+
 #include <iostream>
+#include <vector>
 using namespace std;
 
-int main() {
-    const int N = 5;
-    int map[N][N] = {0};
-    
-    // 첫 번째 열을 1로 초기화
-    for (int i = 0; i < N; i++) {
-        map[i][0] = 1;
+void printMatrix(const vector<vector<int>>& matrix) {
+    for (const auto& row : matrix) {
+        for (int val : row) cout << val << ' ';
+        cout << '\n';
     }
-
-    // 원본 배열 출력
-    cout << "Original map:" << endl;
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
-            cout << map[i][j] << " ";
-        }
-        cout << endl;
-    }
-
-    // 90도 시계 방향 회전
-    int newMap[N][N] = {0};
-
-    int start_x = 0, end_x = N;
-    int start_y = 0, end_y = N;
-
-    for (int i = start_x; i < end_x; i++) {
-        for (int j = start_y; j < end_y; j++) {
-            newMap[start_x + (j - start_y)][(end_y - 1) - (i - start_x)] = map[i][j];
-        }
-    }
-
-    // 회전된 배열 출력
-    cout << "\nRotated map (90 degrees clockwise):" << endl;
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
-            cout << newMap[i][j] << " ";
-        }
-        cout << endl;
-    }
-
-    return 0;
+    cout << '\n';
 }
 
-void clockwise_and_reverse(void)
-{
-    //clockwise
-    for (int i = 0; i < squareSize; i++)
-    {
-        for (int j = 0; j < squareSize; j++)
-        {
+vector<vector<int>> rotate90(const vector<vector<int>>& mat, int startI, int startJ, int size) {
+    vector<vector<int>> res(size, vector<int>(size));
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
             int oldI = startI + i;
             int oldJ = startJ + j;
             int newI = startI + j;
-            int newJ = startJ + (squareSize - 1) - i;
-
-            newMap[newI][newJ] = oldMap[oldI][oldJ];
+            int newJ = startJ + (size - 1) - i;
+            res[newI][newJ] = mat[oldI][oldJ];
         }
     }
-
-    //reverse
-    for (int i = 0; i < squareSize; i++)
-    {
-        for (int j = 0; j < squareSize; j++)
-        {
-            int oldI = startI + i;
-            int oldJ = startJ + j;
-            // 반시계 방향 회전 공식 적용
-            int newI = startI + (squareSize - 1) - j;
-            int newJ = startJ + i;
-
-            newMap[newI][newJ] = oldMap[oldI][oldJ];
-        }
-    }
+    return res;
 }
 
+vector<vector<int>> rotate180(const vector<vector<int>>& mat, int startI, int startJ, int size) {
+    vector<vector<int>> res(size, vector<int>(size));
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            int oldI = startI + i;
+            int oldJ = startJ + j;
+            int newI = startI + (size - 1 - i);
+            int newJ = startJ + (size - 1 - j);
+            res[newI][newJ] = mat[oldI][oldJ];
+        }
+    }
+    return res;
+}
+
+vector<vector<int>> rotate270(const vector<vector<int>>& mat, int startI, int startJ, int size) {
+    vector<vector<int>> res(size, vector<int>(size));
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            int oldI = startI + i;
+            int oldJ = startJ + j;
+            int newI = startI + (size - 1) - j;
+            int newJ = startJ + i;
+            res[newI][newJ] = mat[oldI][oldJ];
+        }
+    }
+    return res;
+}
+
+int main() {
+    // 예시: 5x5 정사각형 배열
+    vector<vector<int>> mat = {
+        { 1,  2,  3,  4,  5},
+        { 6,  7,  8,  9, 10},
+        {11, 12, 13, 14, 15},
+        {16, 17, 18, 19, 20},
+        {21, 22, 23, 24, 25}
+    };
+
+    int startI = 0, startJ = 0, size = 5;
+
+    cout << "Original:\n";
+    printMatrix(mat);
+
+    cout << "90 degrees:\n";
+    printMatrix(rotate90(mat, startI, startJ, size));
+
+    cout << "180 degrees:\n";
+    printMatrix(rotate180(mat, startI, startJ, size));
+
+    cout << "270 degrees:\n";
+    printMatrix(rotate270(mat, startI, startJ, size));
+
+    return 0;
+}
