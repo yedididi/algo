@@ -124,7 +124,7 @@ pair<int, int> getNextCoor(pair<int, int> chosenCheese)
 
         for (int index = 0; index < 4; index++)
         {
-            int newI = poppedNode.i + jNum[index];
+            int newI = poppedNode.i + iNum[index];
             int newJ = poppedNode.j + jNum[index];
 
             if (newI < 0 || newI >= (p * r) || newJ < 0 || newJ >= (p * c)) continue;
@@ -189,8 +189,12 @@ void rotateMap()
 
 int main(void)
 {
+    cin.tie(NULL);
+    ios_base::sync_with_stdio(false);
+
     int k;
     cin >> k;
+
 
     for (int testCase = 1; testCase <= k; testCase++)
     {
@@ -210,11 +214,11 @@ int main(void)
 
 void input(void)
 {
-    globalTime = 0;
+    globalTime = 1;
     cin >> t >> p >> r >> c;
 
     map.resize(p * r, vector<int>(p * c, 0));
-    map.resize(r, vector<int>(c, 0));
+    rotateInfo.resize(r, vector<int>(c, 0));
 
     for (int i = 0; i < p * r; i++)
     {
@@ -227,5 +231,18 @@ void input(void)
         for (int j = 0; j < c; j++)
             cin >> rotateInfo[i][j];
     }
+
     cin >> ratCoordinate.first >> ratCoordinate.second;
 }
+
+/*
+1
+1 2 2 2 
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 6
+4 4
+4 4
+1 1
+*/
